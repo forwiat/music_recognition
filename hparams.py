@@ -18,9 +18,8 @@ class hyperparams:
     eval_size = 500
     test_size = 500
     # must support train_size + eval_size + test_size <= data_size and shuffle_size >= train_size + eval_size + test_size
-    shuffle_size = 20 # relate to train data size or eval data size or test data size.
-    # data_size = 5000 # relate to train data size or eval data size or test data size.
-    batch_size = 2 # relate to train data size or eval data size or test data size.
+    shuffle_size = 64*2 # relate to train data size or eval data size or test data size.
+    batch_size = 64 # relate to train data size or eval data size or test data size.
     num_epoches = 30 # relate to train data size or eval data size or test data size.
     per_steps = 100
 

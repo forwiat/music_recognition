@@ -8,7 +8,7 @@ def main(self):
     g = Graph(mode=mode)
     print('{} graph loaded.'.format(mode))
     saver = tf.train.Saver()
-    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.4)
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9)
     with tf.Session(config=tf.ConfigProto(
             gpu_options=gpu_options, log_device_placement=False, allow_soft_placement=True)) as sess:
         writer = tf.summary.FileWriter(hp.log_dir, sess.graph)

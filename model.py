@@ -80,8 +80,11 @@ class Graph:
                         self.y_hat = tf.nn.sigmoid(self.outputs)
                         tf.get_variable_scope().reuse_variables()
                         # loss
-                        self.res = tf.square(self.y_hat - self._y)
-                        self.loss = tf.reduce_mean(tf.multiply(self._mask, self.res))
+                        self.res = tf.abs(self.y_hat - self.y) # [B, classes]
+                        # self.loss = tf.reduce_mean(tf.multiply(self.res, self.mask))
+                        self.loss = tf.reduce_sum(tf.multiply(self.res, self.mask), keep_dims=True) # [B, classes]
+                        self.count_onenum = tf.count_nonzero(self.mask, axis=-1, keep_dims=True, dtype=tf.float32) # [B, classes]
+                        self.loss = tf.reduce_mean(tf.multiply(self.loss, self.count_onenum)) # [B, ]
                         grad = self.optimizer.compute_gradients(self.loss)
                         self.tower_grads.append(grad)
             self.tower_grads = _average_gradients(self.tower_grads)
