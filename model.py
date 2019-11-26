@@ -106,12 +106,16 @@ class Graph:
                                                  decay_rate=hp.lr_decay_rate)
             self.optimizer = tf.train.AdamOptimizer(self.lr)
             with tf.variable_scope('network'):
-                self.outputs = lstm_3_layers(self.x, num_units=hp.lab_size, bidirection=False,
+                self.outputs = lstm_3_layers(self.x, num_units=hp.lstm_size, bidirection=False,
                                             scope='lstm_3_layers', reuse=tf.AUTO_REUSE)
-                self.y_hat = tf.nn.sigmoid(self.outputs)
+                self.outputs = tf.layers.dense(self.outputs, units=hp.lstm_size//2, activation=tf.nn.tanh, name='dense1')
+                self.y_hat = tf.layers.dense(self.outputs, units=hp.lab_size, activation=tf.nn.sigmoid, name='dense2')
             # loss
-            self.res = tf.square(self.y_hat - self.y) # [B, classes]
-            self.loss = tf.reduce_mean(tf.multiply(self.res, self.mask))
+            self.res = tf.abs(self.y_hat - self.y) # [B, classes]
+            # self.loss = tf.reduce_mean(tf.multiply(self.res, self.mask))
+            self.loss = tf.reduce_sum(tf.multiply(self.res, self.mask), keep_dims=True) # [B, classes]
+            self.count_onenum = tf.count_nonzero(self.mask, axis=-1, keep_dims=True, dtype=tf.float32) # [B, classes]
+            self.loss = tf.reduce_mean(tf.multiply(self.loss, self.count_onenum)) # [B, ]
             self.grads = self.optimizer.compute_gradients(self.loss)
             clipped = []
             for grad, var in self.grads:
@@ -131,7 +135,8 @@ class Graph:
             with tf.variable_scope('network'):
                 self.outputs = lstm_3_layers(self.x, num_units=hp.lab_size, bidirection=False,
                                            scope='lstm_3_layers', reuse=tf.AUTO_REUSE)
-                self.y_hat = tf.nn.sigmoid(self.outputs)
+                self.outputs = tf.layers.dense(self.outputs, units=hp.lstm_size//2, activation=tf.nn.tanh, name='dense1')
+                self.y_hat = tf.layers.dense(self.outputs, units=hp.lab_size, activation=tf.nn.sigmoid, name='dense2')
             self.y_hat = tf.multiply(self.y_hat, self.mask)
 
     ###################################################################################
@@ -146,4 +151,5 @@ class Graph:
             with tf.variable_scope('network'):
                 self.y_hat = lstm_3_layers(self.x, num_units=hp.lab_size, bidirection=False,
                                            scope='lstm_3_layers', reuse=tf.AUTO_REUSE)
-                self.y_hat = tf.nn.sigmoid(self.y_hat)
+                self.outputs = tf.layers.dense(self.outputs, units=hp.lstm_size//2, activation=tf.nn.tanh, name='dense1')
+                self.y_hat = tf.layers.dense(self.outputs, units=hp.lab_size, activation=tf.nn.sigmoid, name='dense2')

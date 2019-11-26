@@ -12,11 +12,11 @@ def lstm_3_layers(inputs, num_units=None, bidirection=False, scope="lstm", reuse
     with tf.variable_scope(scope, reuse=reuse):
         if not num_units:
             num_units = inputs.get_shape().as_list[-1]
-        # cellls = [tf.nn.rnn_cell.LSTMCell(size) for size in [128, 128, num_units]]
-        cellls = [tf.nn.rnn_cell.LSTMCell(size) for size in [256, 256, num_units]]
+        # cellls = [tf.nn.rnn_cell.LSTMCell(size) for size in [num_units, num_units, num_units]]
+        cellls = [tf.nn.rnn_cell.LSTMCell(size) for size in [num_units, num_units, num_units]]
         multi_cell = tf.nn.rnn_cell.MultiRNNCell(cellls)
         if bidirection:
-            bw_cells = [tf.nn.rnn_cell.LSTMCell(size) for size in [256, 256, num_units]]
+            bw_cells = [tf.nn.rnn_cell.LSTMCell(size) for size in [num_units, num_units, num_units]]
             multi_bw_cell = tf.nn.rnn_cell.MultiRNNCell(bw_cells)
             outputs, final_state = tf.nn.dynamic_rnn(multi_cell, multi_bw_cell, inputs=inputs, dtype=tf.float32)
             # outputs shape : top lstm outputs, ([N, T, num_units], [N, T, num_units])

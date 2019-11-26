@@ -18,9 +18,9 @@ class hyperparams:
     eval_size = 500
     test_size = 500
     # must support train_size + eval_size + test_size <= data_size and shuffle_size >= train_size + eval_size + test_size
-    shuffle_size = 200 # relate to train data size or eval data size or test data size.
+    shuffle_size = 20 # relate to train data size or eval data size or test data size.
     # data_size = 5000 # relate to train data size or eval data size or test data size.
-    batch_size = 100 # relate to train data size or eval data size or test data size.
+    batch_size = 2 # relate to train data size or eval data size or test data size.
     num_epoches = 30 # relate to train data size or eval data size or test data size.
     per_steps = 100
 
@@ -29,7 +29,7 @@ class hyperparams:
     sr = 22050
     hop_length = int(12.5 * 0.001 * sr)
     win_length = int(50 * 0.001 * sr)
-    segment_length = 600
+    segment_length = 600 # n_frames
     ref_db = 20
     max_db = 100
 
@@ -37,6 +37,7 @@ class hyperparams:
     n_fft = 2048
     f_size = n_fft/2 + 1
     lab_size = 95
+    lstm_size = 512
     lr = 0.001
     lr_decay_steps = 500
     lr_decay_rate = 0.1

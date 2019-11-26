@@ -57,8 +57,8 @@ def get_spectrogram(wav_path):
     mag_spectrogram = mag_spectrogram.T.astype(np.float32)
     n_frames, feat_size = mag_spectrogram.shape
     if n_frames >= hp.segment_length:
-        start_index = np.random.randint(low=0, high=n_frames - hp.segment_length + 1)
+        start_index = np.random.randint(low=0, high=hp.segment_length - n_frames + 1)
         segmented_mag = mag_spectrogram[start_index: start_index + hp.segment_length, :]
     else:
-        segmented_mag = np.concatenate((mag_spectrogram, np.zeros((hp.segment_length - n_frames, feat_size))), axis=0)
+        segmented_mag = np.concatenate((mag_spectrogram, np.zeros(hp.segment_length - n_frames, feat_size)), axis=0)
     return segmented_mag
